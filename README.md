@@ -46,6 +46,10 @@ return {
 
 `SqeletorProcedure`
 
+### Documentation
+
+See `:help sqeletor.nvim`
+
 ### Development
 
 lua vim.opt.runtimepath:append(',~/source/sqeletor.nvim')

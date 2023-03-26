@@ -1,0 +1,8 @@
+================================================================================
+                                                                  *sqeletor.nvim
+
+An opinionated template plugin to create script and procedure files in a
+specific format.
+
+ vim:tw=78:ts=8:ft=help:norl:
+
