@@ -99,6 +99,7 @@ local function write_to_buffers(result)
 	-- Insert the input at the current cursor position
 	api.nvim_buf_set_lines(bufnr, 0, 0, false, script_template(result))
 	api.nvim_buf_set_name(bufnr, result.script_name .. ".sql")
+	api.nvim_buf_set_option(bufnr, "filetype", "sql")
 
 	-- create the new buffer and put the procedure template in there
 	local proc_buffer = api.nvim_create_buf(true, false)
@@ -106,6 +107,7 @@ local function write_to_buffers(result)
 	bufnr = api.nvim_get_current_buf()
 	api.nvim_buf_set_lines(bufnr, 0, 0, false, proc_template(result.procedure))
 	api.nvim_buf_set_name(bufnr, result.procedure .. ".sql")
+	api.nvim_buf_set_option(bufnr, "filetype", "sql")
 
 	local new_pos = { 7, 0 }
 	local win = api.nvim_get_current_win()

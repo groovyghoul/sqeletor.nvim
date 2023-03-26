@@ -60,6 +60,7 @@ local function write_to_buffer(result)
 
 	api.nvim_buf_set_lines(bufnr, 0, 0, false, script_template(result))
 	api.nvim_buf_set_name(bufnr, result.script_name .. ".sql")
+	api.nvim_buf_set_option(bufnr, "filetype", "sql")
 
 	-- reposition the cursor to the appropriate location to start entering the script info
 	local new_pos = { 3, 0 }
