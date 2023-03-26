@@ -1,5 +1,5 @@
 # SQeLetor
-## Opinionated Templating System
+## Neovim Opinionated Templating Plugin
 
 ### Installation 
 
