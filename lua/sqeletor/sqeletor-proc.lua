@@ -1,6 +1,43 @@
 local M = {}
 local api = vim.api
 
+local function prompt_for_data()
+	-- prompt for script name
+	local script_name_title = "Enter script name (YYMMDDxxNN): "
+	local script_name_prompt = os.date("%y%m%d")
+	local script_name = vim.fn.inputdialog(script_name_title, script_name_prompt)
+
+	if script_name == nil then
+		return nil
+	end
+
+	-- prompt for ticket number
+	local ticket_name_title = "Enter ticket: "
+	local ticket_name = vim.fn.inputdialog(ticket_name_title)
+
+	if ticket_name == nil then
+		return nil
+	end
+
+	-- prompt for description
+	local description_title = "Enter description: "
+	local description = vim.fn.inputdialog(description_title)
+
+	if description == nil then
+		return nil
+	end
+
+	-- prompt for procedure name
+	local procedure_title = "Enter procedure name: "
+	local procedure = vim.fn.inputdialog(procedure_title)
+
+	if procedure == nil then
+		return nil
+	end
+
+	return { script_name = script_name, ticket_name = ticket_name, description = description, procedure = procedure }
+end
+
 local function proc_template(proc_name)
 	local template = {
 		"set term !;",
@@ -25,13 +62,13 @@ local function proc_template(proc_name)
 	return template
 end
 
-local function script_template(script_name, ticket, description, proc_name)
+local function script_template(result)
 	local iso_date = os.date("%Y-%b-%d")
 
 	local template = {
 		"set term !;",
 		"",
-		"create procedure " .. proc_name .. "()",
+		"create procedure " .. result.procedure .. "()",
 		"returns ()",
 		"as",
 		"begin",
@@ -42,62 +79,46 @@ local function script_template(script_name, ticket, description, proc_name)
 		"",
 		"insert into applied_scripts (name, description, script_date)",
 		"    values ('"
-			.. script_name
+			.. result.script_name
 			.. "', '"
-			.. string.upper(ticket)
+			.. string.upper(result.ticket_name)
 			.. " - "
-			.. description
+			.. result.description
 			.. "', '"
-			.. iso_date:upper()
+			.. tostring(iso_date):upper()
 			.. "');",
 	}
 
 	return template
 end
 
-local function write_to_buffer(script_name, ticket, description, proc_name)
+local function write_to_buffers(result)
 	-- Get the current buffer number
 	local bufnr = api.nvim_get_current_buf()
 
 	-- Insert the input at the current cursor position
-	api.nvim_buf_set_lines(bufnr, 0, 0, false, script_template(script_name, ticket, description, proc_name))
-	api.nvim_buf_set_name(bufnr, script_name .. ".sql")
+	api.nvim_buf_set_lines(bufnr, 0, 0, false, script_template(result))
+	api.nvim_buf_set_name(bufnr, result.script_name .. ".sql")
 
 	-- create the new buffer and put the procedure template in there
 	local proc_buffer = api.nvim_create_buf(true, false)
 	api.nvim_set_current_buf(proc_buffer)
 	bufnr = api.nvim_get_current_buf()
-	api.nvim_buf_set_lines(bufnr, 0, 0, false, proc_template(proc_name))
-	api.nvim_buf_set_name(bufnr, proc_name .. ".sql")
+	api.nvim_buf_set_lines(bufnr, 0, 0, false, proc_template(result.procedure))
+	api.nvim_buf_set_name(bufnr, result.procedure .. ".sql")
 
 	local new_pos = { 7, 0 }
 	local win = api.nvim_get_current_win()
 	api.nvim_win_set_cursor(win, new_pos)
 end
 
-local function get_proc_name(script_name, ticket, description)
-	vim.ui.input({ prompt = "Enter procedure name: " }, function(proc_name)
-		write_to_buffer(script_name, ticket, description, proc_name)
-	end)
-end
-
-local function get_description(script_name, ticket)
-	vim.ui.input({ prompt = "Enter description: " }, function(description)
-		get_proc_name(script_name, ticket, description)
-	end)
-end
-
-local function get_ticket(script_name)
-	vim.ui.input({ prompt = "Enter ticket: " }, function(ticket)
-		get_description(script_name, ticket)
-	end)
-end
-
 function M.prompt_for_input()
-	local today_as_string = os.date("%y%m%d")
-	vim.ui.input({ prompt = "Enter script name (YYMMDDxxNN): ", default = today_as_string }, function(script_name)
-		get_ticket(script_name)
-	end)
+	local result = prompt_for_data()
+	if result == nil then
+		return
+	else
+		write_to_buffers(result)
+	end
 end
 
 return M
