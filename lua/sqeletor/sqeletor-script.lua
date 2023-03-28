@@ -56,7 +56,8 @@ local function script_template(result)
 end
 
 local function write_to_buffer(result)
-	local bufnr = api.nvim_get_current_buf()
+	local bufnr = api.nvim_create_buf(true, false)
+	api.nvim_set_current_buf(bufnr)
 
 	api.nvim_buf_set_lines(bufnr, 0, 0, false, script_template(result))
 	api.nvim_buf_set_name(bufnr, result.script_name .. ".sql")
