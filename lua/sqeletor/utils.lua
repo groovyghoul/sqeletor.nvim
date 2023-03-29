@@ -27,6 +27,10 @@ function M.find_root()
 
 		-- Move up to the parent directory
 		current_dir = vim.fn.fnamemodify(current_dir, ":h")
+
+		if current_dir == "C:\\" then
+			return "at root of drive"
+		end
 	end
 end
 
