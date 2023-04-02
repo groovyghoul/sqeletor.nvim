@@ -1,3 +1,4 @@
+local utils = require("sqeletor.utils")
 local M = {}
 local api = vim.api
 
@@ -98,7 +99,18 @@ local function write_to_buffers(result)
 
 	-- Insert the input at the current cursor position
 	api.nvim_buf_set_lines(bufnr, 0, 0, false, script_template(result))
-	api.nvim_buf_set_name(bufnr, result.script_name .. ".sql")
+	-- api.nvim_buf_set_name(bufnr, result.script_name .. ".sql")
+
+	local test_file_root = utils.find_root()
+
+	if test_file_root == nil then
+		api.nvim_buf_set_name(bufnr, result.script_name .. ".sql")
+		print(test_file_root)
+	else
+		local database_script_path = "\\DatabaseScripts\\Standard\\800\\"
+		api.nvim_buf_set_name(bufnr, test_file_root .. database_script_path .. result.script_name .. ".sql")
+	end
+
 	api.nvim_buf_set_option(bufnr, "filetype", "sql")
 
 	-- create the new buffer and put the procedure template in there
@@ -106,7 +118,16 @@ local function write_to_buffers(result)
 	api.nvim_set_current_buf(proc_buffer)
 	bufnr = api.nvim_get_current_buf()
 	api.nvim_buf_set_lines(bufnr, 0, 0, false, proc_template(result.procedure))
-	api.nvim_buf_set_name(bufnr, result.procedure .. ".sql")
+	--api.nvim_buf_set_name(bufnr, result.procedure .. ".sql")
+
+	if test_file_root == nil then
+		api.nvim_buf_set_name(bufnr, result.procedure .. ".sql")
+		print(test_file_root)
+	else
+		local database_script_path = "\\DatabaseScripts\\Standard\\800StoredProcedures\\"
+		api.nvim_buf_set_name(bufnr, test_file_root .. database_script_path .. result.procedure .. ".sql")
+	end
+
 	api.nvim_buf_set_option(bufnr, "filetype", "sql")
 
 	local new_pos = { 7, 0 }
