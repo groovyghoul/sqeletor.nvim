@@ -22,7 +22,8 @@ function M.find_root()
 		if found_file ~= "" then
 			-- api.nvim_buf_set_name(bufnr, current_dir .. "\\" .. result.script_name .. ".sql")
 			-- file_written = true
-			return found_file
+			-- return found_file
+			return current_dir
 		end
 
 		-- Move up to the parent directory
