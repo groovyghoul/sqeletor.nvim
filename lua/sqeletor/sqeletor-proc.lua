@@ -95,7 +95,9 @@ end
 
 local function write_to_buffers(result)
 	-- Get the current buffer number
-	local bufnr = api.nvim_get_current_buf()
+	-- local bufnr = api.nvim_get_current_buf()
+	local bufnr = api.nvim_create_buf(true, false)
+	api.nvim_set_current_buf(bufnr)
 
 	-- Insert the input at the current cursor position
 	api.nvim_buf_set_lines(bufnr, 0, 0, false, script_template(result))
