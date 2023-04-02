@@ -1,3 +1,4 @@
+local utils = require("sqeletor.utils")
 local M = {}
 local api = vim.api
 
@@ -60,7 +61,15 @@ local function write_to_buffer(result)
 	api.nvim_set_current_buf(bufnr)
 
 	api.nvim_buf_set_lines(bufnr, 0, 0, false, script_template(result))
-	api.nvim_buf_set_name(bufnr, result.script_name .. ".sql")
+	local test_file_root = utils.find_root()
+
+	if test_file_root == nil then
+		api.nvim_buf_set_name(bufnr, result.script_name .. ".sql")
+	else
+		local database_script_path = "\\DatabaseScripts\\Standard\\800\\"
+		api.nvim_buf_set_name(bufnr, test_file_root .. database_script_path .. result.script_name .. ".sql")
+	end
+
 	api.nvim_buf_set_option(bufnr, "filetype", "sql")
 
 	-- reposition the cursor to the appropriate location to start entering the script info
