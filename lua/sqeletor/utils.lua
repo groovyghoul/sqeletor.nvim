@@ -29,7 +29,8 @@ function M.find_root()
 		current_dir = vim.fn.fnamemodify(current_dir, ":h")
 
 		if current_dir == "C:\\" then
-			return "at root of drive"
+			return
+			-- return "at root of drive"
 		end
 	end
 end
